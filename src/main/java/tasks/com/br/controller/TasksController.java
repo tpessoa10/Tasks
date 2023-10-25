@@ -29,7 +29,11 @@ public class TasksController {
 	@Autowired
 	private TaskRepository repository;
 	
-
+	/*@GetMapping
+	public ResponseEntity listarTasks(@PageableDefault(size = 10, sort = {"nome")) Pageable) {
+		
+	}*/
+	
 	@PostMapping
 	@Transactional
 	public ResponseEntity<Task> salvarTask(@RequestBody @Valid DadosCadastroTask dados, UriComponentsBuilder uriBuilder) {
