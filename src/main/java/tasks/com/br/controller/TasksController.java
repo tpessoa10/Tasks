@@ -1,7 +1,11 @@
 package tasks.com.br.controller;
 
+import java.awt.print.Pageable;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,9 +29,10 @@ public class TasksController {
 	@Autowired
 	private TaskRepository repository;
 	
+
 	@PostMapping
 	@Transactional
-	public ResponseEntity salvarTask(@RequestBody @Valid DadosCadastroTask dados, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<Task> salvarTask(@RequestBody @Valid DadosCadastroTask dados, UriComponentsBuilder uriBuilder) {
 		var task = new Task(dados);
 		repository.save(task);
 		
@@ -36,8 +41,16 @@ public class TasksController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity listarTaskPorId(@PathVariable Long id) {
+	public ResponseEntity<DadosDetalhamentoTask> listarTaskPorId(@PathVariable Long id) {
 		var task = repository.getReferenceById(id);
 		return ResponseEntity.ok(new DadosDetalhamentoTask(task));
+	}
+	
+	@DeleteMapping("/{id}")
+	@Transactional
+	public ResponseEntity deletarTaskPorId(@PathVariable Long id) {
+		var task = repository.getReferenceById(id);
+		task.excluir();
+		return ResponseEntity.noContent().build();
 	}
 }

@@ -35,4 +35,8 @@ public class Task {
 		this.concluido = false;
 		this.data = LocalDateTime.now();
 	}
+	
+	public void excluir() {
+		this.concluido = true;
+	}
 }
