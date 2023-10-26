@@ -1,9 +1,8 @@
 package tasks.com.br.controller;
 
-import java.awt.print.Pageable;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,8 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import jakarta.transaction.Transactional;
@@ -28,11 +27,6 @@ public class TasksController {
 	
 	@Autowired
 	private TaskRepository repository;
-	
-	/*@GetMapping
-	public ResponseEntity listarTasks(@PageableDefault(size = 10, sort = {"nome")) Pageable) {
-		
-	}*/
 	
 	@PostMapping
 	@Transactional
@@ -52,9 +46,22 @@ public class TasksController {
 	
 	@DeleteMapping("/{id}")
 	@Transactional
-	public ResponseEntity deletarTaskPorId(@PathVariable Long id) {
+	public ResponseEntity<?> deletarTaskPorId(@PathVariable Long id) {
 		var task = repository.getReferenceById(id);
 		task.excluir();
 		return ResponseEntity.noContent().build();
+	}
+	
+	@GetMapping
+	public ResponseEntity<List<Task>> listarTasks(@RequestParam(value = "concluido", required = false) String concluido,
+			@RequestParam(value = "nome")String nome ){
+		List<Task> lista = null;
+		if("y".equals(concluido)) {
+			lista = repository.buscarTarefasConcluidasPorNome(nome);
+		}else if("n".equals(concluido)) {
+			lista = repository.buscarTarefasNaoConcluidasPorNome(nome);
+		}
+		return ResponseEntity.ok(lista);
+		
 	}
 }
