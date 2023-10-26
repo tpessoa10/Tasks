@@ -54,12 +54,15 @@ public class TasksController {
 	
 	@GetMapping
 	public ResponseEntity<List<Task>> listarTasks(@RequestParam(value = "concluido", required = false) String concluido,
-			@RequestParam(value = "nome")String nome ){
+			@RequestParam(value = "ordenar")String valores ){
+		String[] valor = valores.split(",");
+		String nome = valor[0];
+		String data = valor[1];
 		List<Task> lista = null;
 		if("y".equals(concluido)) {
-			lista = repository.buscarTarefasConcluidasPorNome(nome);
+			lista = repository.buscarTarefasConcluidasPorNomeEData(nome, data);
 		}else if("n".equals(concluido)) {
-			lista = repository.buscarTarefasNaoConcluidasPorNome(nome);
+			lista = repository.buscarTarefasNaoConcluidasPorNomeEData(nome, data);
 		}
 		return ResponseEntity.ok(lista);
 		
